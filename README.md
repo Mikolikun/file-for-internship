@@ -57,4 +57,24 @@ CUDA Toolkit	12.3
 cuDNN	9.1
 
 
-2
+#2 iot automatic watering robot2
+## 🚀 Features
+- ใช้ในการตรวจสอบค่าความชื่นในดินว่ามีความชื้นแค่ไหน ถ้าแห้งให้ทำการลดน้ำและสามารถกดลดน้ำเองผ่านแอพได้
+
+ วิธีติดตั้งโปรเจกต์
+
+ สามารถโหลด code แล้วลง library ลองใช้คู่กับ app Blynk iot ได้เลย แต่อย่าลืมเปลื่ยนการตั้งค่าให้เป็น blynk ของตัวเอง
+ รายการ library
+ - Adafruit_BMP085_Unified
+ - Adafruit_BusIO
+ - Adafruit_GFX_Library
+ - Adafruit_SSD1306
+ - Adafruit_Unified_Sensor
+ - arduino_306153
+ - arduino_377608
+ - arduino_700159
+ - BH1750
+ - DHT_kxn
+ - Firebase_ESP8266_Client
+ - Makerlabvn_I2C_Motor_Driver
+ - SimpleTimer
