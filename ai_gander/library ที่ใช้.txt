@@ -1,0 +1,6 @@
+cv2 (opencv-python)
+deepface ใช้แยกเพศ
+pyinstaller ไว้ทำไฟล์ .exe
+os ใช้จัดการระบบปฏิบัติการ
+auto-py-to-exe ใช้แปลงไฟล์ python to .exe
+tf-keras ใช้คู่กับ tensorflow

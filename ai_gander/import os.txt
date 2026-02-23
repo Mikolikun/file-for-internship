@@ -1,0 +1,63 @@
+import os
+import cv2
+from deepface import DeepFace
+
+# ซ่อน warning ของ TensorFlow
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# เปิดกล้อง
+video_capture = cv2.VideoCapture(0)
+
+# โหลด Haar Cascade สำหรับตรวจจับใบหน้า (อย่าลืมตรวจว่าไฟล์อยู่จริง)
+cascade_path = "haarcascade_frontalface_default.xml"
+face_cascade = cv2.CascadeClassifier(cascade_path)
+
+if face_cascade.empty():
+    print("Error loading cascade classifier!")
+    exit()
+
+while True:
+    ret, frame = video_capture.read()
+    if not ret:
+        break
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # ตรวจจับใบหน้า
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    for (x, y, w, h) in faces:
+        # วาดกรอบรอบใบหน้า
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+        # ครอปภาพใบหน้า
+        face = frame[y:y + h, x:x + w]
+
+        # วิเคราะห์เพศด้วย DeepFace
+        try:
+            result = DeepFace.analyze(face, actions=['gender'], enforce_detection=False)
+            gender = result[0]['gender']
+
+# ตัวอย่าง: ถ้ามีค่าเป็น {'Woman': 99.3, 'Man': 0.7}
+# จะเลือก gender ที่ค่ามากสุด
+            predicted_gender = max(gender, key=gender.get)
+            confidence = round(gender[predicted_gender], 2)  # ปัดทศนิยมเหลือ 2 ตำแหน่ง
+
+# แสดงผลลัพธ์แบบไม่มี np.float32
+            cv2.putText(frame, f"{predicted_gender}: {confidence:.2f}%", (x, y + h + 30),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
+
+        except Exception as e:
+            print("วิเคราะห์ไม่ได้:", str(e))
+
+    # แสดงวิดีโอ
+    cv2.imshow("Gender Detection", frame)
+
+    # ออกจากลูปเมื่อกด 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# ปิดกล้อง
+video_capture.release()
+cv2.destroyAllWindows()
