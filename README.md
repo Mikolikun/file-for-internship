@@ -56,8 +56,8 @@ TensorFlow	2.19.0
 CUDA Toolkit	12.3
 cuDNN	9.1
 
+# iot automatic watering robot2
 
-#2 iot automatic watering robot2
 ## 🚀 Features
 - ใช้ในการตรวจสอบค่าความชื่นในดินว่ามีความชื้นแค่ไหน ถ้าแห้งให้ทำการลดน้ำและสามารถกดลดน้ำเองผ่านแอพได้
 
@@ -78,3 +78,14 @@ cuDNN	9.1
  - Firebase_ESP8266_Client
  - Makerlabvn_I2C_Motor_Driver
  - SimpleTimer
+
+# Self balancing robot
+## 🚀 Features
+- ใช้ในการควบคุมหุ่นยนต์2ล้อไม่ให้ล้มและสามารถผ่านอุปสรรคตามที่อาจารย์ต้องการได้
+
+วิธีติดตั้งโปรเจกต์ 
+สามารถโหลด code แล้วลง library แล้วไปปรับจูนให้เข้ากับรถของตัวเองได้เลย
+รายการ library
+-IRremote
+-MPU6050_tockn
+-Wire
