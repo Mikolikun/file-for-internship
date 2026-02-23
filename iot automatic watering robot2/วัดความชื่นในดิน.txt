@@ -1,0 +1,13 @@
+int val = 0;
+int analogPin; 
+
+void setup(){
+  Serial.begin(115200);
+}
+
+void loop(){
+  val  = analogRead(analogPin);
+  Serial.print("humid in soli : ");
+  Serial.println(val);
+  delay(1000);
+}

@@ -1,0 +1,57 @@
+ #define BLYNK_PRINT Serial
+ #define BLYNK_TEMPLATE_ID "TMPL6JjwOfDuF"
+ #define BLYNK_ TEMPLATE_NAME "project iot"
+ #define BLYNK_AUTH_TOKEN "C0n_g7FF0gsX0f5wzrIlNgpWIBrW5GEu"
+ #include <ESP8266WiFi.h>
+ #include <BlynkSimpleEsp8266.h>
+ #include <DHT.h>
+ char auth[] = BLYNK_AUTH_TOKEN;
+ char ssid[] = "Loop";
+ char pass[] = "00000000";
+ #define DHTTYPE DHT22
+ #define DHTPIN D5
+ #define LEDPIN D4
+ DHT dht(DHTPIN, DHTTYPE);
+ float h;
+ float t;
+ BlynkTimer timer;
+
+ void sendDHTdata() {
+ // h = dht.readHumidity();
+ // t = dht.readTemperature();
+ h = random(0,100);
+ t = random(0,100);
+
+ if (isnan(h) || isnan(t)) {
+ Serial.println("Failed to read from DHT sensor!");
+ return;
+ }
+ Serial.print("Humidity: ");
+ Serial.print(h);
+ Serial.print("% | ");
+ Serial.print("Temperature: ");
+ Serial.print(t);
+ Serial.println("C");
+ Blynk.virtualWrite(V1, h);
+ Blynk.virtualWrite(V0, t);
+ }
+
+ BLYNK_WRITE(V0)
+ {
+ int pinValue = param.asInt();
+ Serial.print("V1 Slider value is: ");
+ Serial.println(pinValue);
+ analogWrite (LEDPIN,pinValue);
+ }
+ void setup() {
+ Serial.begin(115200);
+ dht.begin();
+ pinMode(LEDPIN,OUTPUT);
+ Blynk.begin(auth, ssid, pass);
+ timer.setInterval(5000, sendDHTdata);
+ }
+
+ void loop() {
+  Blynk.run();
+  timer.run();
+ }

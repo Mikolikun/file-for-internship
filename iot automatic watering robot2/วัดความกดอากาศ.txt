@@ -1,0 +1,24 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP085_U.h>
+
+Adafruit_BMP085_Unified bmp180;
+
+void setup() {
+  Serial.begin(115200); 
+  Wire.begin(D2, D3);
+  if (!bmp180.begin()) {//เช็คว่าเชื่อมหรือยัง
+    Serial.println("Error - please check the BMP180 board!");
+    while (1);
+  }
+}
+
+void loop() {
+  sensors_event_t event; //ให้sensors_event_t = event 
+  bmp180.getEvent(&event); //อ่านข้อมูลจากเซ็นเซอร์และเก็บข้อมูลเหล่านั้นลงในตัวแปร event
+    Serial.print("Pressure: ");
+    Serial.print(event.pressure / 100.0);  // แปลงจาก Pa เป็น hPa
+    Serial.println(" hPa");
+
+  delay(2000);
+}

@@ -1,0 +1,10 @@
+#define BLYNK_TEMPLATE_ID "TMPL6JjwOfDuF"
+#define BLYNK_TEMPLATE_NAME "project iot"
+#define BLYNK_AUTH_TOKEN "C0n_g7FF0gsX0f5wzrIlNgpWIBrW5GEu"
+ของดิฉัน
+
+
+#define BLYNK_TEMPLATE_ID "TMPL6NKzpYiII"
+#define BLYNK_TEMPLATE_NAME "Joji"
+#define BLYNK_AUTH_TOKEN "RTwRhHg1cY7RsCQyAFLw1C686JMgq_oT"
+jojiLED1
