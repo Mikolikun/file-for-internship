@@ -1,0 +1,235 @@
+#include <Wire.h>
+#include <MPU6050_tockn.h>
+#include <IRremote.h>
+
+// ขากำหนดมอเตอร์
+#define IN1 13
+#define IN2 12
+#define ENA 6
+#define ENB 5
+#define IN3 9
+#define IN4 8
+#define RECV_PIN 2
+
+MPU6050 mpu6050(Wire);
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+// PID Parameters
+float kp = 95 , ki = 2.7, kd = 300;
+float setpoint = 0;
+float moveOffset = 0;
+float turnOffset = 0;
+float error, lastError = 0, integral = 0, derivative, output;
+
+// Serial command
+String cmdstring, cmdcode, parmstring;
+bool newcmd = false, noparm = false;
+int sepIndex;
+
+// เวลา
+unsigned long lastMPUTime = 0;
+unsigned long mpuInterval = 50;
+unsigned long lastIRTime = 0;
+const unsigned long irTimeout = 1000;
+unsigned long lastCode = 0;
+
+// ✅ เคลื่อนที่อัตโนมัติ 1 วินาทีแล้วหยุด
+unsigned long moveStartTime = 0;
+bool isMoving = false;
+unsigned long moveDuration = 1000;
+
+void stopMotor() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.setClock(400000);
+  irrecv.enableIRIn();
+
+  mpu6050.begin();
+  mpu6050.setGyroOffsets(0, 43, 0); // Calibrate
+
+  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);
+  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);
+
+  stopMotor();
+}
+
+void loop() {
+  mpu6050.update();
+  float angleY = mpu6050.getAngleY();
+
+  // ✅ หยุดอัตโนมัติหลังเคลื่อนที่ 1 วินาที
+  if (isMoving && millis() - moveStartTime > moveDuration) {
+    setpoint = 0;
+    isMoving = false;
+    integral = 0;
+    lastError = 0;
+    Serial.println("Auto stop: movement finished");
+  }
+
+  if (millis() - lastMPUTime >= mpuInterval) {
+    lastMPUTime = millis();
+    Serial.print("Angle Y: ");
+    Serial.print(angleY);
+    Serial.print("\t PID output: ");
+    Serial.println(output);
+  }
+
+  pidControl(angleY);
+
+  if (Serial.available() > 0) {
+    cmdstring = Serial.readStringUntil('\n');
+    newcmd = true;
+  }
+
+  if (newcmd) {
+    callcmd();
+    newcmd = false;
+  }
+
+  if (irrecv.decode(&results)) {
+    unsigned long code = results.value;
+
+    if (code == 0xFFFFFFFF) {
+      code = lastCode;
+    } else {
+      lastCode = code;
+    }
+
+    lastIRTime = millis();
+
+    switch (code) {
+      case 0xFF18E7: // Forward
+        Serial.println("Forward");
+        setpoint = 3 ;
+        isMoving = true;
+        moveStartTime = millis(); // เริ่มจับเวลา
+        break;
+      case 0xFF4AB5: // Backward
+        Serial.println("Backward");
+        setpoint = -2;
+        isMoving = true;
+        moveStartTime = millis();
+        break;
+      case 0xFF10EF: // Left
+        Serial.println("Left");
+        turnOffset = 20;
+        break;
+      case 0xFF5AA5: // Right
+        Serial.println("Right");
+        turnOffset = -20;
+        break;
+      case 0xFF38C7: // Stop
+        Serial.println("Stop Button");
+        setpoint = 0;
+        integral = 0;
+        lastError = 0;
+        kp = 90;
+        ki = 2;
+        kd = 300;
+        break;
+      case 0xFF906F: // CH+ → ขึ้นเนิน 9
+        Serial.println("Climb Hill Mode");
+        setpoint = 5;
+        break;
+      case 0xFFB04F : //# เดินหน้าเร็วๆ
+        setpoint = 9;
+        isMoving = true;
+        moveStartTime = millis();
+      break;       
+      case 0xFF9867: // 0 ถอยหลังเร็วๆ
+        setpoint = -6;                                                          
+        isMoving = true;
+        moveStartTime = millis();
+      break;      
+      default:
+        Serial.println("Unknown key");
+        setpoint = 1.5;
+        break;
+    }
+
+    irrecv.resume();
+  }
+
+  if (millis() - lastIRTime > irTimeout) {
+    if (moveOffset != 0) moveOffset = 0;
+    if (turnOffset != 0) turnOffset = 0;
+  }
+}
+
+// ======= PID CONTROL =======
+void pidControl(float pitch) {
+  error = (setpoint + moveOffset) - pitch;
+
+  if (abs(error) < 25) {
+    integral += error;
+  } else {
+    integral = 0;
+  }
+
+  integral = constrain(integral, -300, 300);
+  derivative = error - lastError;
+  output = kp * error + ki * integral + kd * derivative;
+
+  if (abs(pitch) > 45 || abs(derivative) > 50) {
+    integral = 0;
+    output *= 0.5;
+  }
+
+  output = constrain(output, -255, 255);
+
+  lastError = error;
+  motorControl(output);
+}
+
+// ======= MOTOR CONTROL =======
+void motorControl(float output) {
+  int baseSpeed = constrain(output, -255, 255);
+  int leftSpeed = constrain(baseSpeed - turnOffset, -255, 255);
+  int rightSpeed = constrain(baseSpeed + turnOffset, -255, 255);
+
+  analogWrite(ENA, abs(leftSpeed));
+  digitalWrite(IN1, leftSpeed > 0 ? HIGH : LOW);
+  digitalWrite(IN2, leftSpeed > 0 ? LOW : HIGH);
+
+  analogWrite(ENB, abs(rightSpeed));
+  digitalWrite(IN3, rightSpeed > 0 ? HIGH : LOW);
+  digitalWrite(IN4, rightSpeed > 0 ? LOW : HIGH);
+}
+
+// ======= Serial PID Tuning =======
+void callcmd() {
+  cmdstring.trim();
+  sepIndex = cmdstring.indexOf('=');
+
+  if (sepIndex == -1) {
+    cmdcode = cmdstring;
+    noparm = true;
+  } else {
+    cmdcode = cmdstring.substring(0, sepIndex);
+    parmstring = cmdstring.substring(sepIndex + 1);
+    cmdcode.trim();
+    parmstring.trim();  
+    noparm = false;
+  }
+
+  if (cmdcode.equalsIgnoreCase("kp") && !noparm) {
+    kp = parmstring.toFloat();
+    Serial.print("Kp set to: "); Serial.println(kp);
+  } else if (cmdcode.equalsIgnoreCase("ki") && !noparm) {
+    ki = parmstring.toFloat();
+    Serial.print("Ki set to: "); Serial.println(ki);
+  } else if (cmdcode.equalsIgnoreCase("kd") && !noparm) {
+    kd = parmstring.toFloat();
+    Serial.print("Kd set to: "); Serial.println(kd);
+  } else {
+    Serial.println("Unknown command or missing value.");
+  }
+}
