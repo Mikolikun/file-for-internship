@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Kanit', sans-serif;
+}
+
+body {
+    background-color: #1a1a1a; /* พื้นหลังหน้าเว็บสีเทาเข้ม */
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Navbar - ปรับให้ดูพรีเมียมขึ้น */
+nav {
+    padding: 1rem 0;
+    background-color: #0b0b45; 
+    border-bottom: 2px solid #1a1a7a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-con {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.logo a {
+    font-size: 1.8rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.menu {
+    display: flex;
+    list-style: none;
+}
+
+.menu li {
+    margin-left: 1.5rem;
+}
+
+.menu li a {
+    color: #cbd5e0;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.menu li a:hover {
+    color: #ff5733;
+}
+
+/* หน้าหลัก Grid สินค้า */
+/* หน้าหลัก Grid สินค้า */
+.mainbook {
+    gap: 15px; /* ลดระยะห่างลงนิดหน่อยเพื่อให้เบียด 5 อันได้สวยขึ้น */
+    display: grid;
+    
+    /* บังคับให้มี 5 คอลัมน์ ขนาดเท่ากัน */
+    grid-template-columns: repeat(5, 1fr); 
+    
+    max-width: 1200px; /* คุมความกว้างสูงสุด */
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* ปรับขนาดฟอนต์ของชื่อสินค้าและราคาให้เล็กลงนิดหน่อยเพื่อให้รับกับ 5 คอลัมน์ */
+.product-name h4 {
+    font-size: 1rem; 
+    height: 3.5rem; /* ลดความสูงลงเล็กน้อย */
+}
+
+.product-price h5 {
+    font-size: 1.1rem;
+}
+
+.button-product {
+    padding: 8px; /* ปรับปุ่มให้กระชับขึ้น */
+    font-size: 0.9rem;
+}
+
+.product {
+    background-color: white;
+    border: 1px solid #eee; /* เส้นขอบบางๆ ให้ดูละมุน */
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden; /* กันรูปล้นขอบโค้ง */
+    display: flex;
+    flex-direction: column;
+}
+
+.product:hover {
+    transform: translateY(-5px); /* ยกตัวขึ้นเล็กน้อย */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #0f0f6e;
+}
+
+/* จัดการรูปภาพสินค้า */
+.img-product {
+    width: 100%;
+    height: 250px; /* ลดความสูงลงหน่อยเพื่อให้สมส่วน */
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.img-detail {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* สำคัญ: รูปไม่เบี้ยวและเห็นครบทั้งชิ้น */
+    padding: 10px;
+}
+
+/* รายละเอียดสินค้า */
+.product-name h4 {
+    font-size: 1.1rem;
+    color: #333;
+    padding: 1rem 1rem 0 1rem;
+    height: 4.5rem; /* ล็อกความสูงชื่อสินค้าให้เท่ากัน */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-price h5 {
+    padding: 0.5rem 1rem;
+    font-size: 1.3rem;
+    color: #0f0f6e; /* ใช้สีน้ำเงินเดียวกับ Navbar เพื่อความคุมโทน */
+    font-weight: bold;
+}
+
+/* ปุ่มกด: เปลี่ยนจาก Aqua เป็น Navy Blue ให้เข้ากัน */
+.button-product {
+    background-color: #0f0f6e; 
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    margin: 10px 15px 20px 15px;
+    font-weight: 500;
+    transition: 0.3s;
+    border: none;
+}
+
+.button-product:hover {
+    background-color: #1a1a8c;
+    box-shadow: 0 4px 8px rgba(15, 15, 110, 0.3);
+}

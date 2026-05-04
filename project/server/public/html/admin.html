@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music store</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-con">
+                <div class="logo">
+                    <a href="#">Music store</a>
+                </div>
+                <ul class="menu">
+                    <li><a href="/html/index.html">หน้าหลัก</a></li>
+                    <li><a href="/html/admin.html">admin</a></li>
+                    <li><a href="/html/login.html">Login</a></li>
+                    <li><a href="/html/brand.html">Brand</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>เข้าสู่ระบบ admin</h2>
+                <p>ยินดีต้อนรับกลับเข้าสู่ Music Store ฝ่าย admin</p>
+            </div>
+
+            <form action="http://localhost:3000/admin" method="post">
+                <div class="input-group">
+                    <label for="username">username</label>
+                    <input type="text" id="username" name="username" placeholder="กรอกชื่อผู้ใช้ของคุณ" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">รหัสผ่าน</label>
+                    <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน" required>
+                </div>
+
+                <button type="submit" class="admin-btn">เข้าสู่ระบบ</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

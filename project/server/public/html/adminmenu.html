@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music store</title>
+    <link rel="stylesheet" href="/css/adminmenu.css">
+    <script src="/js/adminmenu.js"></script>
+
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-con">
+                <div class="logo">
+                    <a href="#">Music store</a>
+                </div>
+                <ul class="menu">
+                    <li><a href="/html/index.html">หน้าหลัก</a></li>
+                    <li><a href="/html/admin.html">admin</a></li>
+                    <li><a href="/html/login.html">Login</a></li>
+                    <li><a href="/html/brand.html">Brand</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+   <div class="stock-manager">
+    <h2>จัดการจำนวนสินค้าในคลัง</h2>
+    <div class="add-product">
+    <input type="text" id="newName" placeholder="ชื่อสินค้า">
+    <input type="number" id="newPrice" placeholder="ราคา">
+    <input type="number" id="newStock" placeholder="สต็อก">
+    <button onclick="addProduct()">เพิ่มสินค้าใหม่</button>
+</div>
+    <table class="stock-table">
+        <thead>
+            <tr>
+                <th>ชื่อสินค้า</th>
+                <th>จำนวนปัจจุบัน</th>
+                <th>ราคา</th>
+                <th>ปรับปรุงสต็อก</th>
+            </tr>
+        </thead>
+        <tbody id="stockList">
+            </tbody>
+    </table>
+</div>
+    </body>
+</html>
